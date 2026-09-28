@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>非遺音樂地理誌 MVP</title>
+  <!-- 載入 Leaflet 的 CSS 與 JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <style>
+    /* 設定地圖容器大小，這是必須的，否則地圖會縮成一團 */
+    #map { height: 100vh; width: 100%; margin: 0; padding: 0; }
+    
+    /* 客製化資訊框（Popup）內的排版 */
+    .popup-content { text-align: center; font-family: sans-serif; }
+    .popup-content h3 { margin: 0 0 8px 0; color: #333; }
+    .popup-content p { margin: 0 0 12px 0; font-size: 14px; color: #666; }
+    audio { width: 220px; outline: none; }
+  </style>
+</head>
+<body style="margin: 0;">
+
+  <!-- 地圖的掛載點 -->
+  <div id="map"></div>
+
+  <script>
+    // 1. 初始化地圖，設定中心點與縮放層級 (這裡設定在澳門與台灣之間)
+    const map = L.map('map').setView([23.5, 117.5], 6);
+
+    // 2. 載入開源地圖圖磚 (TileLayer) - 使用免費的 OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. 靜態 JSON 資料結構
+    // 實務上，學生可以把這個陣列獨立存成 data.js 來管理，或是進階使用 fetch() 讀取
+    const musicData = [
+      {
+        id: "macau-01",
+        title: "澳門鹹水歌",
+        description: "水上人家的傳統漁歌，反映珠江三角洲的曲調語法。【攞魚歌】何金沛演唱。",
+        lat: 22.1987,
+        lng: 113.5439,
+        audioUrl: "./assets/luoyuge.mp3" // 替換為專案內的相對路徑如 ./assets/xianshui.mp3
+      },
+      {
+        id: "taiwan-01",
+        title: "台灣客家山歌",
+        description: "反映丘陵地形與客家勞動生活的即興歌唱。【老山歌】徐木珍演唱，客家電視製作。",
+        lat: 24.5815,
+        lng: 121.0026,
+        audioUrl: "./assets/laushange_HSU.mp3" 
+      },
+      {
+        id: "Guangdong-01",
+        title: "雷州歌",
+        description: "雷州歌又称雷歌，以雷州方言演唱，每首四句七字，讲究平仄协调",
+        lat: 20.26,
+        lng: 110.23,
+        audioUrl: "./assets/Leizhou.mp3" 
+      },
+      {
+        id: "Guangdong-02",
+        title: "茂名信宜山歌",
+        description: "茂名信宜山歌是广东省茂名市信宜市的传统民间音乐形式，具有浓厚的地方特色和文化底蕴。",
+        lat: 21.674192,
+        lng: 110.914531,
+        audioUrl: "./assets/maoming.mp3" 
+      },
+      {
+        id: "Guangdong-03",
+        title: "河源客家山歌",
+        description: "河源客家山歌是广东省河源市的传统民间音乐形式，具有浓厚的地方特色和文化底蕴。",
+        lat: 23.7463,
+        lng: 114.6958,
+        audioUrl: "./assets/heyuan.mp3" 
+      },
+        {
+        id: "Guangdong-04",
+        title: "揭阳潮汕山歌",
+        description: "揭阳潮汕山歌是广东省揭阳市潮汕地区的传统民间音乐形式，具有浓厚的地方特色和文化底蕴。",
+        lat: 23.0295,
+        lng: 116.3853,
+        audioUrl: "./assets/jieyang.mp3" 
+      },
+        {
+        id: "Guangdong-05",
+        title: "韶关南雄山歌",
+        description: "韶关南雄山歌是广东省韶关市南雄市的传统民间音乐形式，具有浓厚的地方特色和文化底蕴。",
+        lat: 25.1000,
+        lng: 114.3000,
+        audioUrl: "./assets/shaoguan.mp3" 
+      },
+    ];
+
+    // 4. 讀取資料，產生大頭針 (Markers) 與包含播放器的資訊框 (Popup)
+    musicData.forEach(item => {
+      
+      // 組合 HTML 字串，將 JSON 的變數塞進去
+      const popupHTML = `
+        <div class="popup-content">
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+          <!-- HTML5 原生播放器 -->
+          <audio controls controlsList="nodownload">
+            <source src="${item.audioUrl}" type="audio/mpeg">
+            你的瀏覽器不支援音訊播放。
+          </audio>
+        </div>
+      `;
+
+      // 將標記放置於地圖，並綁定剛剛寫好的 HTML
+      L.marker([item.lat, item.lng])
+        .addTo(map)
+        .bindPopup(popupHTML);
+    });
+  </script>
+
+</body>
+</html>
